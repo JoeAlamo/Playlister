@@ -1,6 +1,6 @@
 <?php
 
-namespace Playlister;
+namespace Playlister\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
