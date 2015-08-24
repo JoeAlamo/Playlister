@@ -13,8 +13,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Playlister\Events\SomeEvent' => [
-            'Playlister\Listeners\EventListener',
+        // Provide YouTube driver for Socialite via SocialiteProviders\Manager
+        'SocialiteProviders\Manager\SocialiteWasCalled' => [
+            'Playlister\Extensions\SocialiteProviders\YouTube\Listener',
         ],
     ];
 
