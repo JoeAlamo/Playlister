@@ -144,6 +144,7 @@ return [
         Playlister\Providers\EventServiceProvider::class,
         Playlister\Providers\RouteServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        
 
     ],
 
