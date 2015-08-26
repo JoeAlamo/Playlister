@@ -38,7 +38,7 @@ return [
     'youtube' => [
         'client_id' => getenv('YT_OAUTH2_ID'),
         'client_secret' => getenv('YT_OAUTH2_SECRET'),
-        'redirect_url' => getenv('YT_OAUTH2_REDIRECT')
+        'redirect' => getenv('YT_OAUTH2_REDIRECT')
     ],
 
 ];

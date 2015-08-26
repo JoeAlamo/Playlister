@@ -8,7 +8,11 @@
 
 namespace Playlister\Extensions\SocialiteProviders\YouTube;
 
+use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class Listener {
-
+    public function handle(SocialiteWasCalled $socialiteWasCalled)
+    {
+        $socialiteWasCalled->extendSocialite('youtube', 'Playlister\Extensions\SocialiteProviders\YouTube\Provider');
+    }
 } 
