@@ -20,7 +20,7 @@ class AuthRoutes
                 'as'         => 'login',
                 'uses'       => 'AuthController@showLogin',
             ]);
-            $router->post('login', [
+            $router->get('youtube', [
                 'middleware' => 'guest',
                 'as'         => 'login',
                 'uses'       => 'AuthController@postLogin',

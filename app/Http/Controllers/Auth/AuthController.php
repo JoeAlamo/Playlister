@@ -2,40 +2,50 @@
 
 namespace Playlister\Http\Controllers\Auth;
 
-use Playlister\User;
-use Validator;
+use Illuminate\Routing\Redirector;
+use Laravel\Socialite\Contracts\Factory;
+use Playlister\Models\User;
 use Playlister\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
 class AuthController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | Registration & Login Controller
+    | Login Controller
     |--------------------------------------------------------------------------
     |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
+    | This controller facilitates logging in via YouTube using OAuth2.
+    | For first time logins, we will create a user entity in our database.
     |
     */
 
-    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
-
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @var \Laravel\Socialite\Contracts\Provider
      */
-    protected function validator(array $data)
+    private $socialite;
+    /**
+     * @var Redirector
+     */
+    private $redirector;
+
+    public function __construct(Factory $socialite, Redirector $redirector)
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
-        ]);
+        $this->socialite = $socialite->driver('youtube');
+        $this->redirector = $redirector;
+    }
+
+    public function showLogin()
+    {
+        return $this->socialite->redirect();
+    }
+
+    public function postLogin()
+    {
+        try {
+            dd($this->socialite->user());
+        } catch (\Exception $e) {
+            return $this->redirector->home()->with('alertFail', 'A problem occurred during logging in');
+        }
     }
 
     /**
