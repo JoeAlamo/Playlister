@@ -26,11 +26,18 @@ interface UserRepository
     public function getAll();
 
     /**
-     * @desc Get specific instance of entity
+     * @desc Get specific instance of entity by primary key
      * @param $id
      * @return mixed
      */
     public function getById($id);
+
+    /**
+     * @desc Get user by youtube id
+     * @param $youtubeId
+     * @return mixed
+     */
+    public function getByYoutubeId($youtubeId);
 
     /**
      * @desc Find out whether entity exists

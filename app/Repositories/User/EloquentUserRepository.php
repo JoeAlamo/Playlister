@@ -36,6 +36,16 @@ class EloquentUserRepository extends EloquentRepository implements UserRepositor
     }
 
     /**
+     * @desc Get user by youtube id
+     * @param $youtubeId
+     * @return mixed
+     */
+    public function getByYoutubeId($youtubeId)
+    {
+        return $this->model->where('youtube_id', $youtubeId)->first();
+    }
+
+    /**
      * @desc Return whether user exists tied to $youtubeId
      * @param $youtubeId
      * @return bool
