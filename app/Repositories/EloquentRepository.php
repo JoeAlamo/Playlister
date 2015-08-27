@@ -57,4 +57,4 @@ abstract class EloquentRepository
     {
         return $this->model->where($this->model->getKeyName(), $id)->count() > 0;
     }
-} 
+}
