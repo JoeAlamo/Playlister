@@ -145,6 +145,7 @@ return [
         Playlister\Providers\RouteServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
+        Playlister\Providers\RepositoryServiceProvider::class,
 
     ],
 
