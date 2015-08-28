@@ -4,10 +4,11 @@ namespace Playlister\Http\Controllers\Auth;
 
 use Illuminate\Routing\Redirector;
 use Laravel\Socialite\Contracts\Factory;
-use Playlister\Models\User;
+use Playlister\Core\Auth\AuthService;
+use Playlister\Http\Delegates\Auth\AuthDelegate;
 use Playlister\Http\Controllers\Controller;
 
-class AuthController extends Controller
+class AuthController extends Controller implements AuthDelegate
 {
     /*
     |--------------------------------------------------------------------------
@@ -39,27 +40,26 @@ class AuthController extends Controller
         return $this->socialite->redirect();
     }
 
-    public function postLogin()
+    public function postLogin(AuthService $authService)
     {
         try {
-            dd($this->socialite->user());
+            // Either register or log user in
+            return $authService->registerOrLogin($this->socialite, $this);
         } catch (\Exception $e) {
-            return $this->redirector->home()->with('alertFail', 'A problem occurred during logging in');
+            //@todo Handle "access denied" more cleanly
+            return $this->redirector->to('/')->with('alertFail', 'A problem occurred during logging in');
         }
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
+    public function userJustRegistered()
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        return $this->redirector->to('/')
+            ->with('alertSuccess', "Welcome to Playlister. As this is your first time here, take a moment to read this holding text.");
+    }
+
+    public function userLoggedIn()
+    {
+        return $this->redirector->to('/')
+            ->with('alertSuccess', 'Welcome back!');
     }
 }
