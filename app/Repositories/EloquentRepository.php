@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class EloquentRepository
 {
-    protected $model;
+    private $model;
 
     public function __construct(Model $model) {
         $this->model = $model;

@@ -25,8 +25,12 @@ class EloquentUserRepository extends EloquentRepository implements UserRepositor
         $this->model = $model;
     }
 
-    public function create(YoutubeUser $youtubeUser)
+    public function create($youtubeUser)
     {
+        if (!$youtubeUser instanceof YoutubeUser) {
+            throw new \InvalidArgumentException('Must be a Socialite user');
+        }
+
         $user = new User();
         $user->name = $youtubeUser->getNickname();
         $user->youtube_id = $youtubeUser->getId();

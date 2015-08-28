@@ -8,7 +8,6 @@
 
 namespace Playlister\Repositories\User;
 
-use Laravel\Socialite\Contracts\User;
 
 interface UserRepository
 {
@@ -17,7 +16,7 @@ interface UserRepository
      * @param $input
      * @return mixed
      */
-    public function create(User $input);
+    public function create($input);
 
     /**
      * @desc Get all instances of entity
