@@ -44,10 +44,11 @@ class AuthController extends Controller implements AuthDelegate
     {
         try {
             // Either register or log user in
-            return $authService->registerOrLogin($this->socialite, $this);
+            return $authService->registerOrLogin($this, $this->socialite);
         } catch (\Exception $e) {
             //@todo Handle "access denied" more cleanly
-            return $this->redirector->to('/')->with('alertFail', 'A problem occurred during logging in');
+            return $this->redirector->to('/')
+                ->with('alertFail', 'A problem occurred during logging in');
         }
     }
 
@@ -61,5 +62,16 @@ class AuthController extends Controller implements AuthDelegate
     {
         return $this->redirector->to('/')
             ->with('alertSuccess', 'Welcome back!');
+    }
+
+    public function logoutAction(AuthService $authService)
+    {
+        return $authService->logout($this);
+    }
+
+    public function userLoggedOut()
+    {
+        return $this->redirector->to('/')
+            ->with('alertSuccess', 'You have been successfully logged out.');
     }
 }

@@ -13,4 +13,5 @@ interface AuthDelegate
 {
     public function userJustRegistered();
     public function userLoggedIn();
+    public function userLoggedOut();
 } 

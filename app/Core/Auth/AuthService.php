@@ -12,17 +12,13 @@ namespace Playlister\Core\Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\User as YoutubeUser;
-use Playlister\Http\Delegates\Auth\AuthDelegate;
 use Laravel\Socialite\Contracts\Provider;
+use Playlister\Http\Delegates\Auth\AuthDelegate;
 use Playlister\Models\User;
 use Playlister\Repositories\User\UserRepository;
 
 class AuthService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
     /**
      * @var Guard
      */
@@ -31,15 +27,19 @@ class AuthService
      * @var Request
      */
     private $request;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
-    public function __construct(UserRepository $userRepository, Guard $auth, Request $request)
+    public function __construct(Guard $auth, Request $request, UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
         $this->auth = $auth;
         $this->request = $request;
+        $this->userRepository = $userRepository;
     }
 
-    public function registerOrLogin(Provider $socialite, AuthDelegate $delegate)
+    public function registerOrLogin(AuthDelegate $delegate, Provider $socialite)
     {
         // Attempt to get YouTube user using code->accessToken->user
         $youtubeUser = $socialite->user();
@@ -81,5 +81,13 @@ class AuthService
             'token' => $youtubeUser->token
         ];
         $session->put('user', $userSessionValues);
+    }
+
+    public function logout(AuthDelegate $delegate)
+    {
+        $this->auth->logout();
+        $this->request->session()->forget('user');
+
+        return $delegate->userLoggedOut();
     }
 }
