@@ -78,12 +78,12 @@ class Provider extends AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Get the access token for the given code.
+     * Get the token values for the given code.
      *
      * @param  string  $code
-     * @return string
+     * @return array
      */
-    public function getAccessToken($code)
+    public function getToken($code)
     {
         $postKey = (version_compare(ClientInterface::VERSION, '6') === 1) ? 'form_params' : 'body';
 
@@ -91,7 +91,19 @@ class Provider extends AbstractProvider implements ProviderInterface
             $postKey => $this->getTokenFields($code),
         ]);
 
-        return $this->parseAccessToken($response->getBody());
+        return $this->parseToken($response->getBody());
+    }
+
+    /**
+     * @desc Parses the JSON token response body, adding in created_at
+     * @param $body
+     * @return mixed
+     */
+    protected function parseToken($body)
+    {
+        $token = array_add(json_decode($body, true), 'created', time());
+
+        return $token;
     }
 
     /**
@@ -147,9 +159,8 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     public function user()
     {
-        $user = $this->mapUserToObject($this->getUserByToken(
-            $token = $this->getAccessToken($this->getCode())
-        ));
+        $token = $this->getToken($this->getCode());
+        $user = $this->mapUserToObject($this->getUserByToken($token['access_token']));
 
         return $user->setToken($token);
     }
