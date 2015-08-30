@@ -3,6 +3,7 @@
 namespace Playlister\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Playlister\Services\YoutubeAPI\YoutubeAPIService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('Playlister\Services\YoutubeAPI\YoutubeAPI', function ($app) {
+            return new YoutubeAPIService($app['auth.driver'], $app['request'], $app['config']);
+        });
     }
 }
