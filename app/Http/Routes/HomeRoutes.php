@@ -19,7 +19,11 @@ class HomeRoutes {
     public function map(Registrar $router)
     {
         $router->get('/', function () {
+            $gc = app('Playlister\Services\YoutubeAPI\YoutubeAPI')->getClient();
+            $playlists = new \Google_Service_YouTube($gc);
+            dd($playlists->playlists->listPlaylists('contentDetails,snippet', ['mine' => true]));
             return view('welcome');
         });
     }
+
 }
