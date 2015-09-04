@@ -2,64 +2,76 @@
 
 namespace Playlister\Http\Controllers\Auth;
 
-use Playlister\User;
-use Validator;
+use Illuminate\Routing\Redirector;
+use Laravel\Socialite\Contracts\Factory;
+use Playlister\Core\Auth\AuthService;
+use Playlister\Http\Delegates\Auth\AuthDelegate;
 use Playlister\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller
+class AuthController extends Controller implements AuthDelegate
 {
     /*
     |--------------------------------------------------------------------------
-    | Registration & Login Controller
+    | Login Controller
     |--------------------------------------------------------------------------
     |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
+    | This controller facilitates logging in via YouTube using OAuth2.
+    | For first time logins, we will create a user entity in our database.
     |
     */
 
-    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
-
     /**
-     * Create a new authentication controller instance.
-     *
-     * @return void
+     * @var \Laravel\Socialite\Contracts\Provider
      */
-    public function __construct()
+    private $socialite;
+    /**
+     * @var Redirector
+     */
+    private $redirector;
+
+    public function __construct(Factory $socialite, Redirector $redirector)
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->socialite = $socialite->driver('youtube');
+        $this->redirector = $redirector;
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function showLogin()
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
-        ]);
+        return $this->socialite->redirect();
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
+    public function postLogin(AuthService $authService)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        try {
+            // Either register or log user in
+            return $authService->registerOrLogin($this, $this->socialite);
+        } catch (\Exception $e) {
+            //@todo Handle "access denied" more cleanly
+            return $this->redirector->to('/')
+                ->with('alertFail', 'A problem occurred during logging in');
+        }
+    }
+
+    public function userJustRegistered()
+    {
+        return $this->redirector->to('/')
+            ->with('alertSuccess', "Welcome to Playlister. As this is your first time here, take a moment to read this holding text.");
+    }
+
+    public function userLoggedIn()
+    {
+        return $this->redirector->to('/')
+            ->with('alertSuccess', 'Welcome back!');
+    }
+
+    public function logoutAction(AuthService $authService)
+    {
+        return $authService->logout($this);
+    }
+
+    public function userLoggedOut()
+    {
+        return $this->redirector->to('/')
+            ->with('alertSuccess', 'You have been successfully logged out.');
     }
 }

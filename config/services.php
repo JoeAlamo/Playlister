@@ -30,9 +30,16 @@ return [
     ],
 
     'stripe' => [
-        'model'  => Playlister\User::class,
+        'model'  => Playlister\Models\User::class,
         'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+    ],
+
+    'youtube' => [
+        'api_key' => getenv('YT_API_KEY'),
+        'client_id' => getenv('YT_OAUTH2_ID'),
+        'client_secret' => getenv('YT_OAUTH2_SECRET'),
+        'redirect' => getenv('YT_OAUTH2_REDIRECT')
     ],
 
 ];

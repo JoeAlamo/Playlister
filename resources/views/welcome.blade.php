@@ -39,6 +39,11 @@
         <div class="container">
             <div class="content">
                 <div class="title">Laravel 5</div>
+                @if(Session::has('alertSuccess'))
+                    {{Session::get('alertSuccess')}}
+                @elseif(Session::has('alertFail'))
+                    {{Session::get('alertFail')}}
+                @endif
             </div>
         </div>
     </body>

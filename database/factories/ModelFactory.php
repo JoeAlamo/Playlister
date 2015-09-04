@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(Playlister\User::class, function (Faker\Generator $faker) {
+$factory->define(Playlister\Models\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,

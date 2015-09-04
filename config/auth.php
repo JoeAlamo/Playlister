@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'model' => Playlister\User::class,
+    'model' => Playlister\Models\User::class,
 
     /*
     |--------------------------------------------------------------------------
